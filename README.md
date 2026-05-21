@@ -315,7 +315,7 @@ PG Gold Medallist · Biochemistry · University of Madras
 <div align="center">
 
 *Built with React · Recharts · Framer Motion · Vite · Tailwind CSS*  
-*Data sourced exclusively from direct laboratory experimentation — University of Madras, 2024*
+*Data sourced exclusively from direct laboratory experimentation — University of Madras, 2026*
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00D4FF,50:1E3A5F,100:0D1B2A&height=100&section=footer" width="100%"/>
 
