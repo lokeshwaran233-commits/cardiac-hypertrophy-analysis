@@ -302,7 +302,6 @@ This is a research portfolio application. All data represents **original in vitr
 
 **Lokeshwaran R.**  
 PG Gold Medallist · Biochemistry · University of Madras  
-Transitioning into AI Product Management
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/lokesh-waran-r/)
 [![GitHub](https://img.shields.io/badge/GitHub-lokeshwaran233-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lokeshwaran233)
