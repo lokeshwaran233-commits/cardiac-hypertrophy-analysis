@@ -2,13 +2,15 @@ import { useState } from "react";
 import { MTTChart } from "./MTTChart";
 import { MorphologyComparator } from "./MorphologyComparator";
 import { PCRDashboard } from "./PCRDashboard";
+import { LabGallery } from "./LabGallery";
 
-type Sub = "safety" | "morph" | "molecular";
+type Sub = "safety" | "morph" | "molecular" | "gallery";
 
 const subs: { key: Sub; label: string }[] = [
   { key: "safety", label: "A · Safety profile" },
   { key: "morph", label: "B · Morphological rescue" },
   { key: "molecular", label: "C · Molecular dashboard" },
+  { key: "gallery", label: "📸 Lab Gallery" },
 ];
 
 export function Evidence() {
@@ -41,6 +43,7 @@ export function Evidence() {
         {sub === "safety" && <MTTChart />}
         {sub === "morph" && <MorphologyComparator />}
         {sub === "molecular" && <PCRDashboard />}
+        {sub === "gallery" && <LabGallery />}
       </div>
     </section>
   );

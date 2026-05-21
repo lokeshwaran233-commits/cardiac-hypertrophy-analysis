@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { pcrData, groupColors } from "@/data/pcrData";
 import { CSVButton } from "./CSVButton";
 import { InfoTooltip } from "./InfoTooltip";
+import { LabImage } from "./LabImage";
 
 export function PCRDashboard() {
   const [selected, setSelected] = useState<string>(pcrData[0].gene);
@@ -24,8 +25,9 @@ export function PCRDashboard() {
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-[#E2E8F0]">Molecular dashboard — RT-PCR</h3>
             <InfoTooltip>
-              Quantitative RT-PCR. Fold change expressed relative to untreated control (set to 1.0).
-              Normalized to GAPDH. Click a gene cluster to read its biological role.
+              Semi-quantitative RT-PCR. Fold change expressed relative to untreated control (set to 1.0).
+              Normalized to β-actin (206 bp) housekeeping gene. Amplicon sizes: α-sk 207 bp, β-MHC 202 bp,
+              ANP 312 bp, c-Jun 255 bp. Click a gene cluster to read its biological role.
             </InfoTooltip>
           </div>
           <p className="mt-1 text-xs text-[#94A3B8]">
@@ -33,6 +35,31 @@ export function PCRDashboard() {
           </p>
         </div>
         <CSVButton rows={csvRows} filename="rtpcr_fold_change.csv" />
+      </div>
+
+      <div className="mt-5 rounded-lg border border-[#1E3A5F] bg-[#0D1B2A]/40 p-4">
+        <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-wider text-[#00D4FF]">
+          <span>🧫</span> Gel Evidence
+        </div>
+        <div className="grid gap-4 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+          <LabImage
+            src="/rtpcr_combined.jpg"
+            alt="RT-PCR agarose gel and densitometric quantification"
+            badge="ORIGINAL LAB DATA"
+            caption="Figure 1.3 — RT-PCR gel electrophoresis (Panel A) and densitometric quantification (Panel B). Each value expressed as mean ± SD (n=3). * p<0.01 Control vs T3; ** p<0.001 T3 vs Diosgenin/Valsartan."
+          />
+          <div className="text-xs leading-relaxed text-[#94A3B8]">
+            <p>
+              Panel A shows agarose gel bands for the five amplicons; band intensity for each fetal-program
+              gene rises sharply under T3 and collapses back toward baseline with Diosgenin or Valsartan
+              co-treatment.
+            </p>
+            <p className="mt-3">
+              Panel B is the densitometric quantification — the interactive chart below is the digital
+              reconstruction of that quantification across all four treatment arms.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
