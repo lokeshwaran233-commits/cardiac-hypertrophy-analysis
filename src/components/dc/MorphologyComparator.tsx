@@ -2,8 +2,13 @@ import { motion } from "framer-motion";
 import { morphologyData } from "@/data/morphologyData";
 import { CSVButton } from "./CSVButton";
 import { InfoTooltip } from "./InfoTooltip";
+import { LabImage } from "./LabImage";
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { Camera, ChevronDown } from "lucide-react";
 
 export function MorphologyComparator() {
+  const [showMicro, setShowMicro] = useState(false);
   const maxArea = Math.max(...morphologyData.map((m) => m.area));
   const t3Area = morphologyData.find((m) => m.role === "patho")!.area;
   const control = morphologyData.find((m) => m.role === "control")!.area;
@@ -67,6 +72,48 @@ export function MorphologyComparator() {
             </div>
           );
         })}
+      </div>
+
+      <div className="mt-6 border-t border-[#1E3A5F] pt-4">
+        <button
+          type="button"
+          onClick={() => setShowMicro((v) => !v)}
+          className="inline-flex items-center gap-2 text-xs font-medium text-[#00D4FF] hover:text-[#00D4FF]/80"
+        >
+          <Camera className="h-3.5 w-3.5" />
+          {showMicro ? "Hide" : "View"} Microscopy Images
+          <ChevronDown
+            className={`h-3.5 w-3.5 transition-transform ${showMicro ? "rotate-180" : ""}`}
+          />
+        </button>
+        <AnimatePresence initial={false}>
+          {showMicro && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 grid gap-5 md:grid-cols-2">
+                <LabImage
+                  src="/phase_contrast.jpg"
+                  alt="Phase contrast microscopy of H9c2 cells across treatment groups"
+                  badge="PHASE CONTRAST"
+                  badgeColor="#00D4FF"
+                  caption="Figure 1.2(A) — Phase contrast microscopy (20X, Inverted LABOMED). Arrows indicate cellular morphology across the four treatment arms."
+                />
+                <LabImage
+                  src="/giemsa_staining.jpg"
+                  alt="Giemsa-stained H9c2 cells across treatment groups"
+                  badge="GIEMSA STAINING"
+                  badgeColor="#FF2D87"
+                  caption="Figure 1.2(B) — Giemsa staining (40X). Arrows indicate nuclear enlargement in T3-treated cells and rescue under Diosgenin and Valsartan."
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

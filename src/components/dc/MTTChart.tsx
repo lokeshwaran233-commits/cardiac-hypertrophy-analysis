@@ -5,10 +5,15 @@ import {
 import { mttData } from "@/data/mttData";
 import { CSVButton } from "./CSVButton";
 import { InfoTooltip } from "./InfoTooltip";
+import { LabImage } from "./LabImage";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, Camera } from "lucide-react";
 
 const zoneColor = { safe: "#22C55E", warn: "#F59E0B", danger: "#FF2D87" } as const;
 
 export function MTTChart() {
+  const [showRaw, setShowRaw] = useState(false);
   const csvRows = mttData.map((d) => ({
     concentration_uM: d.conc,
     viability_pct: d.viability,
@@ -65,6 +70,40 @@ export function MTTChart() {
         <Legend swatch="#22C55E" label="Safe zone (0–10 µM)" />
         <Legend swatch="#F59E0B" label="Warning (20 µM)" />
         <Legend swatch="#FF2D87" label="Cytotoxic (40 µM)" />
+      </div>
+
+      <div className="mt-5 border-t border-[#1E3A5F] pt-4">
+        <button
+          type="button"
+          onClick={() => setShowRaw((v) => !v)}
+          className="inline-flex items-center gap-2 text-xs font-medium text-[#00D4FF] hover:text-[#00D4FF]/80"
+        >
+          <Camera className="h-3.5 w-3.5" />
+          Raw Lab Output
+          <ChevronDown
+            className={`h-3.5 w-3.5 transition-transform ${showRaw ? "rotate-180" : ""}`}
+          />
+        </button>
+        <AnimatePresence initial={false}>
+          {showRaw && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 max-w-3xl">
+                <LabImage
+                  src="/mtt_chart.jpg"
+                  alt="MTT assay bar chart"
+                  badge="ORIGINAL LAB DATA"
+                  caption="Figure 1.1 — Dose-dependent cytotoxicity of Diosgenin in H9c2 cells. Mean ± SD (n=6). NS, no significance; *, p<0.05; **, p<0.01; ***, p<0.001."
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

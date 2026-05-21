@@ -1,84 +1,51 @@
-# Diosgenin Cardiac Blueprint — Implementation Plan
+## Real Lab Image Integration
 
-A single-page React + TypeScript portfolio app visualizing real MTT, morphometry, RT-PCR, and pathway data for Lokeshwaran R's PG dissertation on Diosgenin's anti-hypertrophic activity in T3-stressed H9c2 cells.
+Integrate the 4 uploaded experimental images (MTT chart, phase contrast, Giemsa staining, RT-PCR gel+densitometry) into the existing Evidence tab as authentic "Raw Lab Data" panels — without replacing the existing interactive Recharts visualizations.
 
-## Stack
-React + TypeScript + Vite + Tailwind + Recharts + Framer Motion. Dark navy theme (#0D1B2A) with cyan/magenta/amber/green accents per spec.
+### 1. Asset setup
+- Copy the 4 user-uploaded images into `public/` so they're served at root URLs:
+  - `public/mtt_chart.jpg`
+  - `public/phase_contrast.jpg`
+  - `public/giemsa_staining.jpg`
+  - `public/rtpcr_combined.jpg`
 
-## File Structure
-```
-src/
-  data/
-    mttData.ts            Dataset A (7 doses, viability, significance)
-    morphologyData.ts     Dataset B (4 groups, width µm, area µm²)
-    pcrData.ts            Dataset C (4 genes × 4 groups fold change)
-    verdictData.ts        Dataset D comparative table
-    geneInfo.ts           Per-gene explanatory copy
-  components/
-    layout/
-      Header.tsx          Title, About modal trigger, GitHub badge
-      TabNav.tsx          Sticky top/side nav, mobile hamburger
-      Footer.tsx          Name | LinkedIn | GitHub | mail | Chennai
-      AboutModal.tsx      Plain-English research summary
-      InfoTooltip.tsx     Reusable (i) icon w/ methodology copy
-      CountUp.tsx         Framer Motion animated counter
-      CSVDownloadButton.tsx
-    Hero.tsx              Tab 1 — animated heart SVG + 3 count-up stats
-    ExperimentSimulator.tsx  Tab 2 — 4-phase auto-play stepper
-    evidence/
-      EvidenceTabs.tsx    Pill sub-tabs router
-      MTTChart.tsx        3A — color-coded bars, safe zone, 10µM marker
-      MorphologyComparator.tsx  3B — animated scaled circles + labels
-      PCRDashboard.tsx    3C — grouped bars, click-to-info panel
-    MechanismPathway.tsx  Tab 4 — interactive SVG, 3 intercept points
-    VerdictPanel.tsx      Tab 5 — comparison table, conclusion cards, statement, README export, "What I Learned"
-  lib/
-    readmeTemplate.ts     Generates the exact README markdown
-    csv.ts                Blob-based CSV download helper
-  App.tsx                 Tab state + routing shell
-  index.css               Theme tokens, Inter font, glass card utilities
-```
+### 2. Reusable Lightbox component
+- New `src/components/dc/Lightbox.tsx` — full-screen dark overlay (`bg-black/90`), centered image, close button (top-right), ESC-to-close, Framer Motion zoom-in/fade. Props: `src`, `alt`, `caption?`, `isOpen`, `onClose`.
 
-## Tab-by-Tab Build
+### 3. Reusable LabImage card
+- New `src/components/dc/LabImage.tsx` — image with cyan-tinted border, rounded corners, optional "ORIGINAL LAB DATA" / custom badge top-right, caption below. Clickable → opens Lightbox.
 
-**Tab 1 — The Blueprint**
-Animated wireframe heart SVG (Framer Motion pulse). Three CountUp stat cards: "10 µM / Safe Therapeutic Window", "64% / Cell Surface Area Reduction", "4 / Fetal Gene Targets Suppressed". Research blurb + GitHub shield badge.
+### 4. MTTChart.tsx — add collapsible "📷 Raw Lab Output"
+- Below the Recharts bar chart, add a `<details>`-style collapsible (Framer Motion height animation) showing `/mtt_chart.jpg` via LabImage with caption: *"Figure 1.1 — Dose-dependent cytotoxicity of Diosgenin in H9c2 cells. Mean ± SD (n=6). NS, no significance; *, p<0.05; **, p<0.01; ***, p<0.001."*
 
-**Tab 2 — The Experiment**
-Horizontal 4-phase stepper with progress bar, 1.5s auto-advance + click. Phase 1 cell grid morph, Phase 2 four treatment cards with pulsing badges, Phase 3 three assay icons with connecting arrows, Phase 4 "RESULTS UNLOCKED" scorecard + CTA to Tab 3.
+### 5. MorphologyComparator.tsx — add "📷 View Microscopy Images" toggle
+- Toggle button reveals a 2-column responsive grid (stacks on mobile):
+  - Left: `/phase_contrast.jpg`, badge "PHASE CONTRAST", caption *Figure 1.2(A) — Phase contrast microscopy (20X, Inverted LABOMED). Arrows indicate cellular morphology.*
+  - Right: `/giemsa_staining.jpg`, badge "GIEMSA STAINING", caption *Figure 1.2(B) — Giemsa staining (40X). Arrows indicate nuclear enlargement in T3-treated cells.*
+- Both clickable → Lightbox.
 
-**Tab 3 — The Evidence**
-- 3A MTT: Recharts BarChart, green/orange/red bars, ReferenceArea safe zone 0–10µM, dashed line at 10µM, significance stars above bars.
-- 3B Morphology: Animated SVG circles scaled to area (Control 800, T3 2500, DG 900, Val 1100) with width/area labels and rescue % tooltips. Pulsing red border on T3.
-- 3C PCR: Recharts grouped BarChart for α-SK, β-MHC, ANP, c-Jun with 4-color legend, dashed reference at y=1. Click a cluster → side info panel with per-gene narrative.
-- Each chart: (i) methodology tooltip + ⬇ CSV button.
+### 6. PCRDashboard.tsx — add "🧫 Gel Evidence" panel above chart
+- Show `/rtpcr_combined.jpg` (clickable → Lightbox) with caption: *Figure 1.3 — RT-PCR gel electrophoresis (Panel A) and densitometric quantification (Panel B). Mean ± SD (n=3). * p<0.01 Control vs T3; ** p<0.001 T3 vs Diosgenin/Valsartan.*
+- Update InfoTooltip text to mention β-actin (206 bp) housekeeping gene used for normalization, and gene amplicon sizes: α-sk 207 bp, β-MHC 202 bp, ANP 312 bp, c-Jun 255 bp.
 
-**Tab 4 — The Mechanism**
-700×500 SVG canvas: T3 input → Mitochondria (orange) → ERK/MAPK (blue) → Nuclear envelope (ellipse) → Fetal genes. Three red X intercept nodes; clicking expands tooltip card with the exact text from spec. Animated red pathological arrows; X nodes flash cyan when "blocked."
+### 7. New 4th sub-tab "📸 Lab Gallery" in Evidence.tsx
+- Add `gallery` to the Sub type and subs array.
+- New `src/components/dc/LabGallery.tsx`: 2×2 responsive grid of cards, each with thumbnail, title, technique badge, and click → Lightbox. Cards:
+  - MTT Chart — "Cytotoxicity Profile" — Spectrophotometry at 570 nm
+  - Phase Contrast — "Morphological Survey" — 20X, Inverted LABOMED
+  - Giemsa Staining — "Nuclear Enlargement Analysis" — 40X, LABOMED
+  - RT-PCR + Densitometry — "Transcriptional Evidence" — Agarose Gel + Band Quantification
 
-**Tab 5 — The Verdict**
-Comparison table (Dataset D) with 🔴/🟡/🟢 badges, 3 conclusion cards (cyan/magenta/amber borders), centered big statement, "📄 Export README.md" button (downloads via Blob), "What I Learned" 3-bullet reflection, footer contacts.
+### 8. Data corrections
+- `src/data/mttData.ts`: 20 µM significance `"*"` → `"***"`; 40 µM significance `"*"` → `"***"`. Extend the union type to include `"***"`.
+- `src/data/pcrData.ts`: ANP Valsartan `1.6` → `1.3`. Update the ANP insight string accordingly.
 
-## Data Integrity
-All numbers hard-coded from Datasets A–D verbatim in `src/data/*.ts`. No placeholders, no fabrication. DG always #00D4FF, T3 always #FF2D87, Valsartan #F59E0B, Control gray.
+### 9. Out of scope (deferred unless asked)
+- No "About This Research" modal exists in Header today, so the about-paragraph addition is skipped. (Can add in a follow-up if you want a `?` info modal in the header.)
+- Options A/B/C (live-view simulation, pan-zoom, hotspot annotations) are not built in this pass — they're optional creative extensions.
 
-## Deployment Files (root)
-- `vite.config.ts` with `base: '/'` and manualChunks (vendor/charts/motion)
-- `vercel.json` with rewrites + cache + security headers
-- `.github/workflows/deploy.yml` — GitHub Pages via Actions
-- `.github/workflows/ci.yml` — tsc + build check
-- `.gitignore` per spec
-- `package.json` scripts: dev, build, preview, lint, typecheck
-
-## Personal Identity Hooks
-Name "Lokeshwaran R" in header credit + footer. Links: github.com/lokeshwaran233-commits, linkedin.com/in/lokesh-waran-r/, lokeshwaran233@gmail.com. README template updated to use these handles instead of `YOUR_USERNAME`.
-
-## Technical Notes
-- Tailwind config extends theme with the exact hex tokens; `index.css` defines `.glass-card` utility (backdrop-blur 8px, 1px cyan border, 12px radius, cyan glow on hover).
-- Mobile: TabNav collapses to hamburger sheet; charts use ResponsiveContainer; morphology circles scale-down for narrow viewports.
-- All Framer Motion entrances use `initial={{opacity:0,y:20}} animate={{opacity:1,y:0}}` with staggered delays; charts use Recharts `isAnimationActive`.
-- CSV helper builds `Blob([csv], {type:'text/csv'})` and triggers anchor download.
-- README export uses same Blob pattern with `text/markdown`.
-
-## Quality Gates Before Done
-Verify all checkboxes from the spec: data matches datasets exactly, 10µM annotated, gene full names, color discipline, 3 intercepts, README download valid, CSV downloads correct, stepper plays all 4 phases, gene info panel works, tooltips present, all 6 deploy files exist, build + tsc clean, responsive.
+### Technical notes
+- Lightbox uses `AnimatePresence` + a `useEffect` keydown listener for ESC; `document.body.style.overflow = 'hidden'` while open.
+- Images load lazily (`loading="lazy"`) except in Lightbox.
+- Collapsibles/toggles preserve dark navy / cyan theme; badges use existing tokens (`#00D4FF`, `#FF2D87`).
+- No new npm packages required (framer-motion already installed).
