@@ -19,7 +19,7 @@
 
 <br/>
 
-> **A portfolio-grade, fully interactive research application presenting the real experimental findings of a 5-month postgraduate investigation.**
+> **A portfolio-grade, fully interactive research application showcasing the real experimental findings of a postgraduate research project.**
 > Every number, every chart, and every pathway diagram traces back to direct laboratory work — MTT assays, phase contrast microscopy, Giemsa staining, and RT-PCR — conducted at the Department of Biochemistry, University of Madras.
 
 <br/>
