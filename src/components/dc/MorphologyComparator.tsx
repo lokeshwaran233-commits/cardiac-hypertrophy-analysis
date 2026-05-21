@@ -96,25 +96,54 @@ export function MorphologyComparator() {
               className="overflow-hidden"
             >
               <div className="mt-4 grid gap-5 md:grid-cols-2">
-                <LabImage
-                  src="/phase_contrast.jpg"
-                  alt="Phase contrast microscopy of H9c2 cells across treatment groups"
-                  badge="PHASE CONTRAST"
-                  badgeColor="#00D4FF"
-                  caption="Figure 1.2(A) — Phase contrast microscopy (20X, Inverted LABOMED). Arrows indicate cellular morphology across the four treatment arms."
-                />
-                <LabImage
-                  src="/giemsa_staining.jpg"
-                  alt="Giemsa-stained H9c2 cells across treatment groups"
-                  badge="GIEMSA STAINING"
-                  badgeColor="#FF2D87"
-                  caption="Figure 1.2(B) — Giemsa staining (40X). Arrows indicate nuclear enlargement in T3-treated cells and rescue under Diosgenin and Valsartan."
-                />
+                <div>
+                  <TreatmentLabels />
+                  <LabImage
+                    src="/phase_contrast.jpg"
+                    alt="Phase contrast microscopy of H9c2 cells across treatment groups"
+                    badge="PHASE CONTRAST"
+                    badgeColor="#00D4FF"
+                    caption="Figure 1.2(A) — Phase contrast microscopy (20X, Inverted LABOMED). Arrows indicate cellular morphology across the four treatment arms."
+                  />
+                </div>
+                <div>
+                  <TreatmentLabels />
+                  <LabImage
+                    src="/giemsa_staining.jpg"
+                    alt="Giemsa-stained H9c2 cells across treatment groups"
+                    badge="GIEMSA STAINING"
+                    badgeColor="#FF2D87"
+                    caption="Figure 1.2(B) — Giemsa staining (40X). Arrows indicate nuclear enlargement in T3-treated cells and rescue under Diosgenin and Valsartan."
+                  />
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+    </div>
+  );
+}
+
+const TREATMENT_LABELS: { label: string; color: string }[] = [
+  { label: "Control", color: "#22D3EE" },     // cyan-400
+  { label: "T3 Treated", color: "#F87171" },  // red-400
+  { label: "T3 + DG", color: "#4ADE80" },     // green-400
+  { label: "T3 + Val", color: "#FACC15" },    // yellow-400
+];
+
+function TreatmentLabels() {
+  return (
+    <div className="mb-2 grid grid-cols-4 gap-1 rounded-md border border-[#1E3A5F] bg-[#0D1B2A]/60 px-2 py-1.5">
+      {TREATMENT_LABELS.map((t) => (
+        <div
+          key={t.label}
+          className="text-center text-xs font-semibold"
+          style={{ color: t.color }}
+        >
+          {t.label}
+        </div>
+      ))}
     </div>
   );
 }
