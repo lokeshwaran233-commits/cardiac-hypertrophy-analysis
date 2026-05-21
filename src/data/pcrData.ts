@@ -26,9 +26,9 @@ export const pcrData: PCRRow[] = [
   {
     gene: "ANP",
     full: "Atrial Natriuretic Peptide",
-    Control: 1.0, T3: 3.0, Diosgenin: 2.3, Valsartan: 1.6,
+    Control: 1.0, T3: 3.0, Diosgenin: 2.3, Valsartan: 1.3,
     insight:
-      "Atrial natriuretic peptide. Hallmark of atrial stress. DG achieves meaningful suppression of fetal program activation.",
+      "Atrial natriuretic peptide. Hallmark of atrial stress. DG suppresses to 2.3×; Valsartan drives expression closest to baseline at 1.3×.",
   },
   {
     gene: "c-Jun",
